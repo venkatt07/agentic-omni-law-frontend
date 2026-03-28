@@ -22,4 +22,7 @@ export const runService = {
   cancel(runId: string) {
     return apiClient.post<{ ok: boolean; run_id: string; status: string }>(`/runs/${encodeURIComponent(runId)}/cancel`);
   },
+  stop(runId: string) {
+    return apiClient.post<{ ok: boolean; run_id: string; status: string }>(`/runs/${encodeURIComponent(runId)}/stop`);
+  },
 };

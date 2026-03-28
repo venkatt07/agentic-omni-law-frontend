@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { FadeIn } from "@/lib/magic-ui";
 import { useAppStore } from "@/store";
 import { caseService, mapQueryParse, type CaseDetailsResponse } from "@/services/caseService";
+import { runService } from "@/services/runService";
 import { EmptyState, ErrorState, LoadingState } from "@/components/app/PageState";
 import AgentReportBackButton from "@/components/app/AgentReportBackButton";
 import { BookOpenText, CheckCircle2, Download, RefreshCw, Scale, Share2, ShieldCheck, Sparkles } from "lucide-react";
@@ -484,6 +485,25 @@ export default function QueryParsingResult() {
       cancelled = true;
     };
   }, [caseId, expectedRunId]);
+
+  useEffect(() => {
+    if (!expectedRunId || !parseResult) return;
+    let cancelled = false;
+    const stopIfTerminal = async () => {
+      try {
+        const status = await caseService.getRunStatus(expectedRunId);
+        if (cancelled) return;
+        if (status.status === "RUNNING" || status.status === "PENDING") return;
+        await runService.stop(expectedRunId).catch(() => undefined);
+      } catch {
+        // Best-effort only.
+      }
+    };
+    void stopIfTerminal();
+    return () => {
+      cancelled = true;
+    };
+  }, [expectedRunId, parseResult]);
 
   useEffect(() => {
     if (!caseId) return;
