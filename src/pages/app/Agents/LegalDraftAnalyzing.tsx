@@ -50,10 +50,6 @@ export default function LegalDraftAnalyzing() {
     const isTransient = (msg: string) => /failed to fetch|networkerror|load failed/i.test(msg);
     const editorHref = `/app/cases/${caseId}/agents/legal-drafts/${templateKey}/${draftId}${runId ? `?runId=${encodeURIComponent(runId)}` : ""}`;
     const navigateToDraft = () => {
-      if (typeof window !== "undefined") {
-        window.location.replace(editorHref);
-        return;
-      }
       setLocation(editorHref, { replace: true } as any);
     };
     const tryOpenDraft = async () => {
