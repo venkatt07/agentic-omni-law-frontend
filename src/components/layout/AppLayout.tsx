@@ -236,10 +236,14 @@ export default function AppLayout({ children }: { children: ReactNode }) {
 
     try {
       if (runId) {
-        await runService.cancel(runId);
+        await runService.stop(runId);
       }
     } catch {
-      // best effort
+      try {
+        if (runId) await runService.cancel(runId);
+      } catch {
+        // best effort
+      }
     }
   };
 
